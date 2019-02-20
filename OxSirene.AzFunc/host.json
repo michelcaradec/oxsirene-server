@@ -1,0 +1,9 @@
+{
+    "version": "2.0",
+    "functionTimeout": "00:00:10",
+    "http": {
+        "maxOutstandingRequests": 200,
+        "maxConcurrentRequests": 100,
+        "dynamicThrottlesEnabled": true
+    }
+}

@@ -1,0 +1,50 @@
+{
+  "console": {
+    "location" :{
+      "longitude": "__YOUR_DELIVERY_LONGITUDE__",
+      "latitude": "__YOUR_DELIVERY_LATITUDE__"
+    }
+  },
+  "api": {
+    "local_cache": {
+      "activate": "true",
+      "root": "../../cache"
+    },
+    "http": {
+      "connectionLeaseTimeout": 600,
+      "request": {
+        "from": "__YOUR_EMAIL_FOR_FROM_REQUEST_HEADER__"
+      }
+    },
+    "scrap_product": {
+      "amazon": {
+        "pattern_href_1": "[\\\"'](\\/gp\\/help\\/seller\\/at-a-glance\\.html)[^\\\"']*[\\\"']",
+        "pattern_href_2": "[\\\"'](\\/gp\\/aag\\/main\\/ref=)[^\\\"']*[\\\"']",
+        "pattern_seller": "(seller=)([^\\\"'&]*)",
+        "pattern_title": "<title[^>]*>(?'product'[^<]*)<\\/title>"
+      },
+      "cdiscount": {
+        "pattern_offer_list": "(?'offer_list'<ul class=\\\"offersList jsOffersList\\\"[^>]+>)",
+        "pattern_offer_list_uri": "(data-url=\\\")(?'offer_list_uri'[^\\\"]+)",
+        "pattern_seller": "(?'seller'\\\/mpv-.+?.html)",
+        "pattern_title": "(<h1 itemprop=\\\"name\\\">)(?'product'[^<]+)"
+      }
+    },
+    "scrap_seller": {
+      "amazon": {
+        "seller_page": "https://www.amazon.fr/sp?seller={0}",
+        "pattern_list": "(?'h3_begin'<h3 [^>]+>)(\\s*Informations vendeur[^<]*)(?'h3_end'<\\/h3>)(?'list_begin'[^<]*)(?'list'<ul (?'until_list_end'.+?(?=<\\/ul>))(?'list_end'<\\/ul>))",
+        "pattern_list_items": "<li>.*?<\\/li>",
+        "pattern_clean_html": "<[^>]*>",
+        "info_separator" : ":"
+      },
+      "cdiscount": {
+        "seller_page": "https://www.cdiscount.com{0}",
+        "pattern_list": "<ul class=\\\"sCgvLegalInfo\\\">(?'list'.+)(<\\\/ul>)",
+        "pattern_list_items": "<li>.*?<\\/li>",
+        "pattern_clean_html": "<[^>]*>",
+        "info_separator" : ":"
+      }
+    }
+  }
+}

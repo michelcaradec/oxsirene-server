@@ -1,0 +1,525 @@
+# https://editor.swagger.io/
+# https://swagger.io/docs/specification/
+# Properties with "$ref" and "description" cause warnings in editor: https://github.com/swagger-api/swagger-editor/issues/1184
+openapi: "3.0.0"
+info:
+  title: "OxSirene Server API"
+  description: "**OxSirene Server** API definition. You can find out more about OxSirene Server on [Github repository](https://github.com/michelcaradec/oxsirene-server)."
+  version: "0.1"
+  contact:
+    name: API support
+    email: "oxsirene@outlook.fr"
+  license:
+    name: "Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)"
+    url: "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr"
+
+servers:
+  - url: https://oxsirenefunc.azurewebsites.net/api/v1
+    description: Main (production) server
+
+tags:
+- name: "Token"
+  description: ""
+- name: "Location"
+  description: ""
+- name: "Product"
+  description: ""
+- name: "Seller"
+  description: ""
+- name: "Sirene"
+  description: ""
+- name: "BAN"
+  description: ""
+- name: "Delivery"
+  description: ""
+
+paths:
+  /token:
+    get:
+      tags:
+      - "Token"
+      summary: Returns a token to use with API.
+      description: Each call to the API (except this one) must use a token.
+      responses:
+        '200':
+          description: A JSON object containing a valid token.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/APIAccessTokenResponse"
+
+  /location/{ip}:
+    get:
+      tags:
+      - "Location"
+      summary: Returns location for a given IP address.
+      description: IP address is guessed from request header if not provided.
+      parameters:
+      - name: ip
+        in: path
+        required: true
+        description: IP address
+        schema:
+          type: string
+          format: xxx.xxx.xxx.xxx
+          example: 255.255.255.255
+      responses:
+        '200':
+          description: A JSON object containing location informations.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GuessIPLocationResponse"
+
+  /location:
+    post:
+      tags:
+      - "Location"
+      summary: Returns location for a given IP address.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GuessIPLocationRequest"
+      responses:
+        '200':
+          description: A JSON object containing location informations.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GuessIPLocationResponse"
+
+  /product/checker:
+    post:
+      tags:
+      - "Product"
+      summary: Returns a market place elligibility checker for a corresponding web site.
+      description: An elligibility checker is a script executed on client-side to evaluate a web page elligibility.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GetElligibilityCheckerRequest"
+      responses:
+        '200':
+          description: A JSON object containing an elligibility check script.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetEligibilityCheckerResponse"
+
+  /product/scrap:
+    post:
+      tags:
+      - "Product"
+      summary: Returns a list of sellers for a given product on a market place.
+      description: Some products are not provided by sellers, resulting in an empty list.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScrapProductRequest"
+      responses:
+        '200':
+          description: A JSON object containing a list of sellers.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScrapProductResponse"
+
+  /seller/scrap/{marketplace}/{seller}:
+    get:
+      tags:
+      - "Seller"
+      summary: Returns details on a seller.
+      description: Contains informations such as name, commercial identifier, etc.
+      parameters:
+      - name: marketplace
+        in: path
+        required: true
+        description: Market place identifier
+        schema:
+          type: string
+      - name: seller
+        in: path
+        required: true
+        description: Seller identifier
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Seller details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScrapSellerResponse"
+
+  /seller/scrap:
+    post:
+      tags:
+      - "Seller"
+      summary: Returns details for a seller.
+      description: Contains informations such as name, commercial identifier, etc.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScrapSellerRequest"
+      responses:
+        '200':
+          description: Seller details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScrapSellerResponse"
+
+  /sirene/{siren}:
+    get:
+      tags:
+      - "Sirene"
+      summary: Returns company details on a seller.
+      description: Contains informations from SIRENE service.
+      parameters:
+      - name: siren
+        in: path
+        required: true
+        description: Seller's SIREN or SIRET
+        schema:
+          type: string
+      responses:
+        '200':
+          description: A JSON object containing company details.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuerySireneResponse"
+
+  /sirene:
+    post:
+      tags:
+      - "Sirene"
+      summary: Returns company details on a seller.
+      description: Contains informations from SIRENE service.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuerySireneRequest"
+      responses:
+        '200':
+          description: A JSON object containing company details.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuerySireneResponse"
+
+  /ban/{lon}/{lat}:
+    get:
+      tags:
+      - "BAN"
+      summary: Returns geo-location details.
+      description: Converts a geo-location into a fully-readable address.
+      parameters:
+      - name: lon
+        in: path
+        required: true
+        description: Longitude
+        schema:
+          type: number
+      - name: lat
+        in: path
+        required: true
+        description: Latitude
+        schema:
+          type: number
+      responses:
+        '200':
+          description: A JSON object containing address details.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueryBANResponse"
+
+  /ban:
+    post:
+      tags:
+      - "BAN"
+      summary: Returns geo-location details.
+      description: Converts a geo-location into a fully-readable address.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QueryBANRequest"
+      responses:
+        '200':
+          description: A JSON object containing address details.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueryBANResponse"
+
+  /delivery/estimate/{from_lon}/{from_lat}/{to_lon}/{to_lat}:
+    get:
+      tags:
+      - "Delivery"
+      summary: Returns delivery estimates details.
+      parameters:
+      - name: from_lon
+        in: path
+        required: true
+        description: Starting longitude
+        schema:
+          type: number
+      - name: from_lat
+        in: path
+        required: true
+        description: Starting latitude
+        schema:
+          type: number
+      - name: to_lon
+        in: path
+        required: true
+        description: Ending longitude
+        schema:
+          type: number
+      - name: to_lat
+        in: path
+        required: true
+        description: Ending latitude
+        schema:
+          type: number
+      responses:
+        '200':
+          description: A JSON object containing delivery estimates details.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EstimateDeliveryResponse"
+
+  /delivery/estimate:
+    post:
+      tags:
+      - "Delivery"
+      summary: Returns delivery estimates details.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EstimateDeliveryRequest"
+      responses:
+        '200':
+          description: A JSON object containing delivery estimates details.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EstimateDeliveryResponse"
+
+components:
+  schemas:
+    APIAccessTokenResponse:
+      type: object
+      properties:
+        key:
+          type: string
+          format: xxxx-xxxx-xxxx-xxxx
+          example: abcd-efgh-ijkl-mnop
+          description: API access token
+    
+    GuessIPLocationRequest:
+      type: object
+      properties:
+        ip:
+          type: string
+          description: IP address
+          format: xxx.xxx.xxx.xxx
+          example: 255.255.255.255
+          
+    GuessIPLocationResponse:
+      type: object
+      properties:
+        coordinates:
+          description: Geo-location
+          allOf:
+          - $ref: "#/components/schemas/GeoPoint"
+    
+    GetElligibilityCheckerRequest:
+      type: object
+      properties:
+        page:
+          type: string
+          example: https://www.amazon.fr/
+          description: Web page URL
+  
+    GetEligibilityCheckerResponse:
+      type: object
+      properties:
+        market_place_id:
+          type: string
+          example: amazon
+          description: Market place identifier
+        script:
+          type: string
+          description: Elligibility check script
+  
+    ScrapProductRequest:
+      type: object
+      properties:
+        page:
+          type: string
+          example: https://www.amazon.fr/
+          description: Web page URL
+  
+    ScrapProductResponse:
+      type: object
+      properties:
+        market_place_id:
+          type: string
+          example: amazon
+          description: Market place identifier
+        product_name:
+          type: string
+          description: Product name
+        seller_ids:
+          type: array
+          description: Sellers identifiers
+          items:
+            type: string
+  
+    ScrapSellerRequest:
+      type: object
+      properties:
+        market_place_id:
+          type: string
+          description: Market place identifier
+        seller_id:
+          type: string
+          description: Seller identifier
+  
+    ScrapSellerResponse:
+      type: object
+      properties:
+        seller_id:
+          type: string
+          description: Seller identifier
+        name:
+          type: string
+          description: Seller name
+        siren:
+          type: string
+          description: Seller SIREN
+        siret:
+          type: string
+          description: Seller SIRET
+        properties:
+          type: object
+          description: Seller's details
+          additionalProperties:
+            type: string
+  
+    QuerySireneRequest:
+      type: object
+      properties:
+        siren:
+          type: string
+          description: SIREN
+        siret:
+          type: string
+          description: SIRET
+  
+    QuerySireneResponse:
+      type: object
+      properties:
+        organizations:
+          type: array
+          description: List of company's organizations
+          items:
+            $ref: "#/components/schemas/Organization"
+              
+    Organization:
+      type: object
+      description: Organization informations.
+      properties:
+        name:
+          type: string
+          description: Organization name
+        siren:
+          type: string
+          description: Organization SIREN
+        siret:
+          type: string
+          description: Organization SIRET
+        address:
+          type: string
+          description: Oganization Full address
+  
+    QueryBANRequest:
+      type: object
+      properties:
+        address:
+          type: string
+          description: Address
+        coordinates:
+          description: Geo-location
+          allOf:
+          - $ref: "#/components/schemas/GeoPoint"
+  
+    QueryBANResponse:
+      type: object
+      properties:
+        coordinates:
+          description: Geo-location
+          allOf:
+          - $ref: "#/components/schemas/GeoPoint"
+        address:
+          type: string
+          description: Full address
+        city:
+          type: string
+          description: City
+        post_code:
+          type: string
+          description: Postal code
+          
+    GeoPoint:
+      type: object
+      description: Geo-location.
+      properties:
+        lon:
+          type: number
+          description: Longitude
+        lat:
+          type: number
+          description: Latitude
+  
+    EstimateDeliveryRequest:
+      type: object
+      properties:
+        from:
+          description: Starting geo-location
+          allOf:
+          - $ref: "#/components/schemas/GeoPoint"
+        to:
+          description: Ending geo-location
+          allOf:
+          - $ref: "#/components/schemas/GeoPoint"
+  
+    EstimateDeliveryResponse:
+      type: object
+      properties:
+        great_circle:
+          type: number
+          description: Great circle distance between reseller and delivery point
+        distance:
+          type: number
+          description: Road distance between reseller and delivery point
+        carbon_print:
+          type: number
+          description: Carbon print for a travel by truck over road distance

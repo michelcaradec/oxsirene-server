@@ -1,0 +1,35 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_EXTENSION_VERSION": "~2",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "AzureWebJobsStorage": "__YOUR_AZURE_STORAGE_CONNECTION_STRING__",
+
+    "api:token": "__YOUR_AZURE_FUNCTIONS_API_KEY__",
+    "api:http:connectionLeaseTimeout": "600",
+    "api:http:request:from": "__YOUR_EMAIL_FOR_FROM_REQUEST_HEADER__",
+
+    "api:get_sirene_access_token:sirene_client_credentials": "__YOUR_SIRENE_API_KEY__",
+    "api:geo_ip:ipgeolocation_apikey": "__YOUR_GEOPIP_API_KEY__",
+
+    "api:scrap_product:amazon:pattern_href_1": "[\\\"'](\\/gp\\/help\\/seller\\/at-a-glance\\.html)[^\\\"']*[\\\"']",
+    "api:scrap_product:amazon:pattern_href_2": "[\\\"'](\\/gp\\/aag\\/main\\/ref=)[^\\\"']*[\\\"']",
+    "api:scrap_product:amazon:pattern_seller": "(seller=)([^\\\"'&]*)",
+    "api:scrap_product:amazon:pattern_title": "<title[^>]*>(?'product'[^<]*)<\\\\/title>",
+    "api:scrap_seller:amazon:seller_page": "https://www.amazon.fr/sp?seller={0}",
+    "api:scrap_seller:amazon:pattern_list": "(?'h3_begin'<h3 [^>]+>)(\\s*Informations vendeur[^<]*)(?'h3_end'<\\/h3>)(?'list_begin'[^<]*)(?'list'<ul (?'until_list_end'.+?(?=<\\/ul>))(?'list_end'<\\/ul>))",
+    "api:scrap_seller:amazon:pattern_list_items": "<li>.*?<\\/li>",
+    "api:scrap_seller:amazon:pattern_clean_html": "<[^>]*>",
+    "api:scrap_seller:amazon:info_separator": ":",
+
+    "api:scrap_product:cdiscount:pattern_offer_list": "(?'offer_list'<ul class=\\\"offersList jsOffersList\\\"[^>]+>)",
+    "api:scrap_product:cdiscount:pattern_offer_list_uri": "(data-url=\\\")(?'offer_list_uri'[^\\\"]+)",
+    "api:scrap_product:cdiscount:pattern_seller": "(?'seller'\\/mpv-.+?.html)",
+    "api:scrap_product:cdiscount:pattern_title": "(<h1 itemprop=\\\"name\\\">)(?'product'[^<]+)",
+    "api:scrap_seller:cdiscount:seller_page": "https://www.cdiscount.com{0}",
+    "api:scrap_seller:cdiscount:pattern_list": "<ul class=\\\"sCgvLegalInfo\\\">(?'list'.+)(<\\/ul>)",
+    "api:scrap_seller:cdiscount:pattern_list_items": "<li>.*?<\\/li>",
+    "api:scrap_seller:cdiscount:pattern_clean_html": "<[^>]*>",
+    "api:scrap_seller:cdiscount:info_separator": ":"
+  }
+}
